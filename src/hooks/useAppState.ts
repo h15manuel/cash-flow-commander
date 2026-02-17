@@ -24,6 +24,10 @@ export function useAppState() {
   const setCashDrawer = useCallback((v: number) => setState(s => ({ ...s, cashDrawer: v })), []);
   const toggleShield = useCallback(() => setState(s => ({ ...s, shieldMode: !s.shieldMode })), []);
 
+  const closeShift = useCallback(() => {
+    setState(s => ({ ...s, zAmount: 0, tipsTotal: 0, cashDrawer: 0 }));
+  }, []);
+
   const addEntry = useCallback((entry: CashEntry) => {
     setState(s => {
       const newEntries = [...s.entries, entry];
@@ -62,6 +66,7 @@ export function useAppState() {
     setZAmount,
     setCashDrawer,
     toggleShield,
+    closeShift,
     addEntry,
     deleteEntry,
     depositsTotal,
