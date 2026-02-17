@@ -4,10 +4,21 @@ import { formatCLP, parseCLPInput } from '@/lib/format';
 import { EntryType } from '@/types';
 import QuickCountModal from '@/components/QuickCountModal';
 import EntryDialog from '@/components/EntryDialog';
-import { ArrowDownCircle, CreditCard, Banknote, TrendingUp, TrendingDown, CheckCircle2, Target } from 'lucide-react';
+import { ArrowDownCircle, CreditCard, Banknote, TrendingUp, TrendingDown, CheckCircle2, Target, LogOut } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function Dashboard() {
-  const { state, setZAmount, depositsTotal, meta, efectivoReal, diferencia, status } = useApp();
+  const { state, setZAmount, closeShift, depositsTotal, meta, efectivoReal, diferencia, status } = useApp();
   const [zInput, setZInput] = useState(state.zAmount > 0 ? state.zAmount.toString() : '');
 
   const handleZChange = (val: string) => {
@@ -96,6 +107,33 @@ export default function Dashboard() {
           </button>
         </EntryDialog>
       </div>
+
+      {/* Close shift button */}
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <button className="w-full m3-surface p-4 flex items-center justify-center gap-2 hover:border-destructive/40 transition-colors">
+            <LogOut className="w-5 h-5 text-destructive" />
+            <span className="text-sm font-medium text-destructive">Cerrar Turno</span>
+          </button>
+        </AlertDialogTrigger>
+        <AlertDialogContent className="rounded-3xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Cerrar turno?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Se limpiará la planilla (Z, gaveta y propinas vuelven a $0). Los movimientos registrados se conservan en el historial.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-2xl">Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { closeShift(); setZInput(''); }}
+            >
+              Cerrar Turno
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Today's entries */}
       {todayEntries.length > 0 && (
