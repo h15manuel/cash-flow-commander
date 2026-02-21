@@ -7,26 +7,46 @@ import { Calculator, Delete } from 'lucide-react';
 
 export default function QuickCountModal() {
   const { setCashDrawer, state } = useApp();
-  const [value, setValue] = useState(state.cashDrawer.toString());
+  const [current, setCurrent] = useState('0');
+  const [accumulated, setAccumulated] = useState(0);
+  const [history, setHistory] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
+
+  const totalDisplay = accumulated + (parseInt(current) || 0);
 
   const handleKey = (key: string) => {
     if (key === 'C') {
-      setValue('0');
+      setCurrent('0');
+      setAccumulated(0);
+      setHistory([]);
     } else if (key === '⌫') {
-      setValue(v => v.length > 1 ? v.slice(0, -1) : '0');
+      setCurrent(v => v.length > 1 ? v.slice(0, -1) : '0');
+    } else if (key === '+') {
+      const val = parseInt(current) || 0;
+      if (val > 0) {
+        setAccumulated(a => a + val);
+        setHistory(h => [...h, val]);
+        setCurrent('0');
+      }
     } else if (key === 'OK') {
-      setCashDrawer(parseInt(value) || 0);
+      setCashDrawer(totalDisplay);
       setOpen(false);
     } else {
-      setValue(v => v === '0' ? key : v + key);
+      setCurrent(v => v === '0' ? key : v + key);
     }
+  };
+
+  const resetState = () => {
+    const v = state.cashDrawer.toString();
+    setCurrent(v);
+    setAccumulated(0);
+    setHistory([]);
   };
 
   const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '⌫'];
 
   return (
-    <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (o) setValue(state.cashDrawer.toString()); }}>
+    <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (o) resetState(); }}>
       <DialogTrigger asChild>
         <button className="m3-surface-elevated p-5 w-full text-left animate-slide-up cursor-pointer hover:border-primary/40 transition-colors">
           <div className="flex items-center justify-between">
@@ -46,8 +66,32 @@ export default function QuickCountModal() {
             Conteo Rápido
           </DialogTitle>
         </DialogHeader>
-        <div className="text-center py-4">
-          <p className="text-4xl font-bold text-foreground">{formatCLP(parseInt(value) || 0)}</p>
+
+        {/* History of partial sums */}
+        {history.length > 0 && (
+          <div className="bg-secondary/50 rounded-2xl p-3 space-y-1 max-h-24 overflow-y-auto">
+            {history.map((h, i) => (
+              <div key={i} className="flex justify-between text-xs text-muted-foreground">
+                <span>Parcial {i + 1}</span>
+                <span>+ {formatCLP(h)}</span>
+              </div>
+            ))}
+            {parseInt(current) > 0 && (
+              <div className="flex justify-between text-xs text-primary font-medium">
+                <span>Actual</span>
+                <span>+ {formatCLP(parseInt(current))}</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="text-center py-3">
+          <p className="text-4xl font-bold text-foreground">{formatCLP(totalDisplay)}</p>
+          {accumulated > 0 && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Acumulado: {formatCLP(accumulated)} + {formatCLP(parseInt(current) || 0)}
+            </p>
+          )}
         </div>
         <div className="grid grid-cols-3 gap-2">
           {keys.map(k => (
@@ -64,6 +108,12 @@ export default function QuickCountModal() {
             </button>
           ))}
         </div>
+        <button
+          onClick={() => handleKey('+')}
+          className="w-full h-12 rounded-2xl font-bold text-lg bg-primary/20 text-primary transition-all active:scale-95 mt-1"
+        >
+          + Sumar parcial
+        </button>
         <Button
           onClick={() => handleKey('OK')}
           className="w-full h-14 rounded-3xl bg-primary text-primary-foreground font-bold text-lg mt-2"
