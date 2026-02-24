@@ -40,7 +40,7 @@ export default function Dashboard() {
     <div className="space-y-4 pt-2 max-w-lg mx-auto">
       {/* Status indicator */}
       {state.zAmount > 0 && (
-        <div className={`${sc.class} rounded-3xl p-4 flex items-center gap-3 animate-slide-up`}>
+        <div className={`${sc.class} rounded-3xl p-4 flex items-center gap-3`}>
           <sc.icon className="w-7 h-7" />
           <div>
             <p className="font-bold text-lg">{sc.label}</p>
@@ -50,7 +50,7 @@ export default function Dashboard() {
       )}
 
       {/* Z Amount input */}
-      <div className="m3-surface-elevated p-5 animate-slide-up">
+      <div className="m3-surface-elevated p-5">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Monto del Sistema (Z)</p>
         <input
           value={zInput ? formatCLP(parseInt(zInput)) : ''}
@@ -66,21 +66,21 @@ export default function Dashboard() {
 
       {/* Summary grid */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="m3-surface p-4 animate-slide-up">
+        <div className="m3-surface p-4">
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Meta</p>
           <p className="text-xl font-bold text-foreground shield-blur mt-1">{formatCLP(meta)}</p>
           <p className="text-[10px] text-muted-foreground">Z - Propinas</p>
         </div>
-        <div className="m3-surface p-4 animate-slide-up">
+        <div className="m3-surface p-4">
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Efectivo Real</p>
           <p className="text-xl font-bold text-foreground shield-blur mt-1">{formatCLP(efectivoReal)}</p>
           <p className="text-[10px] text-muted-foreground">Depósitos + Gaveta</p>
         </div>
-        <div className="m3-surface p-4 animate-slide-up">
+        <div className="m3-surface p-4">
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Depósitos</p>
           <p className="text-xl font-bold text-primary shield-blur mt-1">{formatCLP(depositsTotal)}</p>
         </div>
-        <div className="m3-surface p-4 animate-slide-up">
+        <div className="m3-surface p-4">
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Propinas</p>
           <p className="text-xl font-bold text-warning shield-blur mt-1">{formatCLP(state.tipsTotal)}</p>
         </div>
