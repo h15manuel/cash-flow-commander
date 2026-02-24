@@ -36,7 +36,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Content */}
       <main className="flex-1 overflow-y-auto px-4 pb-24">
-        <style>{`:root { --shield-blur: ${state.shieldMode ? '8px' : '0px'}; }`}</style>
+        <style dangerouslySetInnerHTML={{ __html: `:root { --shield-blur: ${state.shieldMode ? '8px' : '0px'}; }` }} />
         {children}
       </main>
 
