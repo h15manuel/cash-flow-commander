@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, Palette, Moon, Sun, Check } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Settings as SettingsIcon, Palette, Moon, Sun, Check, Download, Upload } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
+import { useApp } from '@/contexts/AppContext';
+import { toast } from 'sonner';
+import { AppState, defaultAppState } from '@/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -27,6 +31,8 @@ function hexToHSL(hex: string): { h: number; s: number; l: number } | null {
 const presetColors = ['#1abc9c', '#3498db', '#9b59b6', '#e74c3c', '#f39c12', '#2ecc71', '#e91e63', '#00bcd4'];
 
 export default function SettingsPage() {
+  const { state, setState } = useApp();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDark, setIsDark] = useState(() => !document.documentElement.classList.contains('light'));
   const [primaryColor, setPrimaryColor] = useState(() => localStorage.getItem('primaryColor') || '#1abc9c');
 
@@ -47,18 +53,51 @@ export default function SettingsPage() {
     const val = `${hsl.h} ${hsl.s}% ${hsl.l}%`;
     document.documentElement.style.setProperty('--primary', val);
     document.documentElement.style.setProperty('--ring', val);
-    // Compute foreground
     const fgL = hsl.l > 50 ? 6 : 98;
     document.documentElement.style.setProperty('--primary-foreground', `${hsl.h} ${hsl.s}% ${fgL}%`);
   };
 
-  // Restore on mount
   useEffect(() => {
     const saved = localStorage.getItem('primaryColor');
     if (saved) applyColor(saved);
     const theme = localStorage.getItem('theme');
     if (theme === 'light') document.documentElement.classList.add('light');
   }, []);
+
+  const exportBackup = () => {
+    const data = JSON.stringify(state, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cajita-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Respaldo exportado correctamente');
+  };
+
+  const importBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target?.result as string);
+        // Validate basic structure
+        if (typeof parsed !== 'object' || !Array.isArray(parsed.entries) || !Array.isArray(parsed.shiftHistory)) {
+          throw new Error('Formato inválido');
+        }
+        const restored: AppState = { ...defaultAppState, ...parsed };
+        setState(restored);
+        toast.success(`Respaldo restaurado: ${restored.shiftHistory.length} turnos, ${restored.entries.length} movimientos`);
+      } catch {
+        toast.error('Error: el archivo no es un respaldo válido');
+      }
+    };
+    reader.readAsText(file);
+    // Reset input
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   return (
     <div className="space-y-4 pt-2 max-w-lg mx-auto">
@@ -111,6 +150,23 @@ export default function SettingsPage() {
               className="rounded-2xl bg-secondary border-border font-mono"
             />
           </div>
+        </div>
+      </div>
+
+      {/* Backup */}
+      <div className="m3-surface-elevated p-5 space-y-3">
+        <p className="text-sm font-medium text-foreground">Respaldo de Datos</p>
+        <p className="text-xs text-muted-foreground">Exporta o importa todos tus datos (turnos, movimientos, empresas, configuración) en formato JSON.</p>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={exportBackup} className="flex-1 rounded-2xl gap-2 bg-secondary/50 border-border">
+            <Download className="w-4 h-4 text-primary" />
+            <span className="text-foreground text-sm">Exportar</span>
+          </Button>
+          <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="flex-1 rounded-2xl gap-2 bg-secondary/50 border-border">
+            <Upload className="w-4 h-4 text-primary" />
+            <span className="text-foreground text-sm">Importar</span>
+          </Button>
+          <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={importBackup} />
         </div>
       </div>
 
