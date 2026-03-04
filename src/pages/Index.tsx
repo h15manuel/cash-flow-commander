@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { formatCLP, parseCLPInput } from '@/lib/format';
-import { EntryType } from '@/types';
+import { EntryType, CashEntry } from '@/types';
 import QuickCountModal from '@/components/QuickCountModal';
 import EntryDialog from '@/components/EntryDialog';
+import EditEntryDialog from '@/components/EditEntryDialog';
 import { ArrowDownCircle, CreditCard, Banknote, TrendingUp, TrendingDown, CheckCircle2, Target, LogOut } from 'lucide-react';
 import {
   AlertDialog,
@@ -20,6 +21,7 @@ import {
 export default function Dashboard() {
   const { state, setZAmount, closeShift, depositsTotal, meta, efectivoReal, diferencia, status } = useApp();
   const [zInput, setZInput] = useState(state.zAmount > 0 ? state.zAmount.toString() : '');
+  const [editingEntry, setEditingEntry] = useState<CashEntry | null>(null);
 
   const handleZChange = (val: string) => {
     const nums = val.replace(/\D/g, '');
@@ -146,11 +148,15 @@ export default function Dashboard() {
               const labels = { DEPOSIT: 'Depósito', TIP: 'Propina', CREDIT: 'Crédito' };
               const Icon = icons[entry.type];
               return (
-                <div key={entry.id} className="flex items-center gap-3 bg-secondary/50 rounded-2xl p-3">
+                <div
+                  key={entry.id}
+                  className="flex items-center gap-3 bg-secondary/50 rounded-2xl p-3 cursor-pointer hover:bg-secondary/80 transition-colors"
+                  onClick={() => setEditingEntry(entry)}
+                >
                   <Icon className={`w-5 h-5 ${colors[entry.type]}`} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground truncate">
-                      {labels[entry.type]} {entry.cashier && `· ${entry.cashier}`} {entry.company && `· ${entry.company}`}
+                      {labels[entry.type]} {entry.company && `· ${entry.company}`}
                     </p>
                     <p className="text-xs text-muted-foreground">{entry.time}</p>
                   </div>
@@ -160,6 +166,15 @@ export default function Dashboard() {
             })}
           </div>
         </div>
+      )}
+
+      {/* Edit entry dialog */}
+      {editingEntry && (
+        <EditEntryDialog
+          entry={editingEntry}
+          open={!!editingEntry}
+          onOpenChange={(open) => { if (!open) setEditingEntry(null); }}
+        />
       )}
     </div>
   );

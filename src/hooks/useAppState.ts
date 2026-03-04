@@ -89,6 +89,16 @@ export function useAppState() {
     });
   }, []);
 
+  const editEntry = useCallback((id: string, updates: Partial<Pick<CashEntry, 'amount' | 'observation' | 'company'>>) => {
+    setState(s => {
+      const newEntries = s.entries.map(e => e.id === id ? { ...e, ...updates } : e);
+      const tipsTotal = newEntries
+        .filter(e => e.type === 'TIP')
+        .reduce((sum, e) => sum + e.amount, 0);
+      return { ...s, entries: newEntries, tipsTotal };
+    });
+  }, []);
+
   // Computed values
   const depositsTotal = state.entries
     .filter(e => e.type === 'DEPOSIT')
@@ -109,6 +119,7 @@ export function useAppState() {
     toggleShield,
     closeShift,
     addEntry,
+    editEntry,
     deleteEntry,
     depositsTotal,
     meta,
