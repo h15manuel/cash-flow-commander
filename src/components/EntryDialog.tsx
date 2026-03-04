@@ -9,7 +9,7 @@ import { formatCLP, parseCLPInput, generateId } from '@/lib/format';
 import { ArrowDownCircle, CreditCard, Banknote, Plus } from 'lucide-react';
 
 const entryConfig = {
-  [EntryType.DEPOSIT]: { label: 'Depósito', icon: ArrowDownCircle, needsCashier: true, needsCompany: false },
+  [EntryType.DEPOSIT]: { label: 'Depósito', icon: ArrowDownCircle, needsCashier: false, needsCompany: false },
   [EntryType.TIP]: { label: 'Propina', icon: Banknote, needsCashier: false, needsCompany: false },
   [EntryType.CREDIT]: { label: 'Crédito', icon: CreditCard, needsCashier: false, needsCompany: true },
 };
