@@ -5,7 +5,8 @@ import { EntryType, CashEntry } from '@/types';
 import QuickCountModal from '@/components/QuickCountModal';
 import EntryDialog from '@/components/EntryDialog';
 import EditEntryDialog from '@/components/EditEntryDialog';
-import { ArrowDownCircle, CreditCard, Banknote, TrendingUp, TrendingDown, CheckCircle2, Target, LogOut } from 'lucide-react';
+import { ArrowDownCircle, CreditCard, Banknote, TrendingUp, TrendingDown, CheckCircle2, Target, LogOut, ChevronDown } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -139,33 +140,38 @@ export default function Dashboard() {
 
       {/* Today's entries (non-credit) */}
       {todayEntries.filter(e => e.type !== EntryType.CREDIT).length > 0 && (
-        <div className="m3-surface p-4">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Movimientos de Hoy</p>
-          <div className="space-y-2">
-            {todayEntries.filter(e => e.type !== EntryType.CREDIT).slice(-5).reverse().map(entry => {
-              const icons = { DEPOSIT: ArrowDownCircle, TIP: Banknote, CREDIT: CreditCard };
-              const colors = { DEPOSIT: 'text-primary', TIP: 'text-warning', CREDIT: 'text-info' };
-              const labels = { DEPOSIT: 'Depósito', TIP: 'Propina', CREDIT: 'Crédito' };
-              const Icon = icons[entry.type];
-              return (
-                <div
-                  key={entry.id}
-                  className="flex items-center gap-3 bg-secondary/50 rounded-2xl p-3 cursor-pointer hover:bg-secondary/80 transition-colors"
-                  onClick={() => setEditingEntry(entry)}
-                >
-                  <Icon className={`w-5 h-5 ${colors[entry.type]}`} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">
-                      {labels[entry.type]} {entry.company && `· ${entry.company}`}
-                    </p>
-                    <p className="text-xs text-muted-foreground">{entry.time}</p>
+        <Collapsible defaultOpen className="m3-surface overflow-hidden">
+          <CollapsibleTrigger className="w-full p-4 pb-3 flex items-center justify-between cursor-pointer group">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Movimientos de Hoy</p>
+            <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="px-4 pb-4 space-y-2">
+              {todayEntries.filter(e => e.type !== EntryType.CREDIT).slice(-5).reverse().map(entry => {
+                const icons = { DEPOSIT: ArrowDownCircle, TIP: Banknote, CREDIT: CreditCard };
+                const colors = { DEPOSIT: 'text-primary', TIP: 'text-warning', CREDIT: 'text-info' };
+                const labels = { DEPOSIT: 'Depósito', TIP: 'Propina', CREDIT: 'Crédito' };
+                const Icon = icons[entry.type];
+                return (
+                  <div
+                    key={entry.id}
+                    className="flex items-center gap-3 bg-secondary/50 rounded-2xl p-3 cursor-pointer hover:bg-secondary/80 transition-colors"
+                    onClick={() => setEditingEntry(entry)}
+                  >
+                    <Icon className={`w-5 h-5 ${colors[entry.type]}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">
+                        {labels[entry.type]} {entry.company && `· ${entry.company}`}
+                      </p>
+                      <p className="text-xs text-muted-foreground">{entry.time}</p>
+                    </div>
+                    <p className="text-sm font-bold text-foreground shield-blur">{formatCLP(entry.amount)}</p>
                   </div>
-                  <p className="text-sm font-bold text-foreground shield-blur">{formatCLP(entry.amount)}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+                );
+              })}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       )}
 
       {/* Credits grouped by 6 */}
@@ -180,53 +186,54 @@ export default function Dashboard() {
         const grandTotal = credits.reduce((sum, e) => sum + e.amount, 0);
 
         return (
-          <div className="m3-surface p-4">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">
-              Créditos · {credits.length} registros
-            </p>
-            <div className="space-y-4">
-              {groups.map((group, gi) => {
-                const subtotal = group.reduce((sum, e) => sum + e.amount, 0);
-                return (
-                  <div key={gi}>
-                    <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1.5">
-                      Grupo {gi + 1} ({group.length}/6)
-                    </p>
-                    <div className="space-y-1.5">
-                      {group.map(entry => (
-                        <div
-                          key={entry.id}
-                          className="flex items-center gap-3 bg-secondary/50 rounded-2xl p-2.5 cursor-pointer hover:bg-secondary/80 transition-colors"
-                          onClick={() => setEditingEntry(entry)}
-                        >
-                          <CreditCard className="w-4 h-4 text-info" />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate">
-                              {entry.company || 'Crédito'}
-                            </p>
-                            <p className="text-xs text-muted-foreground">{entry.time}</p>
+          <Collapsible defaultOpen className="m3-surface overflow-hidden">
+            <CollapsibleTrigger className="w-full p-4 pb-3 flex items-center justify-between cursor-pointer group">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                Créditos · {credits.length} registros
+              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-bold text-info shield-blur">{formatCLP(grandTotal)}</p>
+                <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="px-4 pb-4 space-y-4">
+                {groups.map((group, gi) => {
+                  const subtotal = group.reduce((sum, e) => sum + e.amount, 0);
+                  return (
+                    <div key={gi}>
+                      <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1.5">
+                        Grupo {gi + 1} ({group.length}/6)
+                      </p>
+                      <div className="space-y-1.5">
+                        {group.map(entry => (
+                          <div
+                            key={entry.id}
+                            className="flex items-center gap-3 bg-secondary/50 rounded-2xl p-2.5 cursor-pointer hover:bg-secondary/80 transition-colors"
+                            onClick={() => setEditingEntry(entry)}
+                          >
+                            <CreditCard className="w-4 h-4 text-info" />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">
+                                {entry.company || 'Crédito'}
+                              </p>
+                              <p className="text-xs text-muted-foreground">{entry.time}</p>
+                            </div>
+                            <p className="text-sm font-bold text-foreground shield-blur">{formatCLP(entry.amount)}</p>
                           </div>
-                          <p className="text-sm font-bold text-foreground shield-blur">{formatCLP(entry.amount)}</p>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+                      <div className="flex justify-between items-center mt-2 pt-2 border-t border-border/50">
+                        <p className="text-xs font-semibold text-info">Subtotal grupo {gi + 1}</p>
+                        <p className="text-sm font-bold text-info shield-blur">{formatCLP(subtotal)}</p>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-center mt-2 pt-2 border-t border-border/50">
-                      <p className="text-xs font-semibold text-info">Subtotal grupo {gi + 1}</p>
-                      <p className="text-sm font-bold text-info shield-blur">{formatCLP(subtotal)}</p>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {groups.length > 0 && (
-                <div className="flex justify-between items-center pt-2 border-t-2 border-info/30">
-                  <p className="text-xs font-bold text-foreground uppercase">Total Créditos</p>
-                  <p className="text-base font-bold text-info shield-blur">{formatCLP(grandTotal)}</p>
-                </div>
-              )}
-            </div>
-            <p className="text-[10px] text-muted-foreground mt-2 italic">Los créditos no afectan el saldo de caja</p>
-          </div>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-muted-foreground px-4 pb-3 italic">Los créditos no afectan el saldo de caja</p>
+            </CollapsibleContent>
+          </Collapsible>
         );
       })()}
 
