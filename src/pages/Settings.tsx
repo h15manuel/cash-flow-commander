@@ -153,6 +153,47 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      {/* Notificaciones de turno */}
+      <div className="m3-surface-elevated p-5 space-y-3">
+        <div className="flex items-center gap-3">
+          <Bell className="w-5 h-5 text-primary" />
+          <p className="text-sm font-medium text-foreground">Notificaciones de Turno</p>
+        </div>
+        <p className="text-xs text-muted-foreground">Recibe una notificación el día anterior recordándote tu próximo turno.</p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-foreground">Activar notificaciones</p>
+          <Switch
+            checked={state.notificationsEnabled}
+            onCheckedChange={async (checked) => {
+              if (checked) {
+                if (!('Notification' in window)) {
+                  toast.error('Tu navegador no soporta notificaciones');
+                  return;
+                }
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                  toast.error('Debes permitir las notificaciones en tu navegador');
+                  return;
+                }
+              }
+              setState(s => ({ ...s, notificationsEnabled: checked }));
+              toast.success(checked ? 'Notificaciones activadas' : 'Notificaciones desactivadas');
+            }}
+          />
+        </div>
+        {state.notificationsEnabled && (
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Hora de aviso</Label>
+            <Input
+              type="time"
+              value={state.notificationTime}
+              onChange={e => setState(s => ({ ...s, notificationTime: e.target.value }))}
+              className="rounded-2xl bg-secondary border-border w-32"
+            />
+          </div>
+        )}
+      </div>
+
       {/* Backup */}
       <div className="m3-surface-elevated p-5 space-y-3">
         <p className="text-sm font-medium text-foreground">Respaldo de Datos</p>
