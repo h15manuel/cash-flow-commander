@@ -62,6 +62,8 @@ export interface AppState {
   weeklyHours: 44 | 42 | 40;
   /** @deprecated Use per-day hours in DayShift instead */
   shiftDuration: 7.5 | 6.5;
+  notificationsEnabled: boolean;
+  notificationTime: string; // HH:mm format
 }
 
 export const defaultAppState: AppState = {
