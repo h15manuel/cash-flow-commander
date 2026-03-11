@@ -77,6 +77,13 @@ export default function EditEntryDialog({ entry, open, onOpenChange }: Props) {
             </div>
           )}
 
+          {entry.type === EntryType.CREDIT && (
+            <div className="flex items-center justify-between rounded-2xl bg-secondary/50 p-3">
+              <Label className="text-sm text-foreground">Crédito en efectivo</Label>
+              <Switch checked={cashCredit} onCheckedChange={setCashCredit} />
+            </div>
+          )}
+
           <div>
             <Label className="text-muted-foreground text-sm">Observación</Label>
             <Input
