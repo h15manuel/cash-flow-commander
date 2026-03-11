@@ -11,6 +11,7 @@ export interface CashEntry {
   cashier?: string;
   company?: string;
   observation?: string;
+  cashCredit?: boolean; // crédito en efectivo – se resta de la meta
   date: string; // ISO string
   time: string; // HH:mm
 }

@@ -104,7 +104,11 @@ export function useAppState() {
     .filter(e => e.type === 'DEPOSIT')
     .reduce((sum, e) => sum + e.amount, 0);
 
-  const meta = state.zAmount - state.tipsTotal;
+  const cashCreditTotal = state.entries
+    .filter(e => e.type === 'CREDIT' && e.cashCredit)
+    .reduce((sum, e) => sum + e.amount, 0);
+
+  const meta = state.zAmount - state.tipsTotal - cashCreditTotal;
   const efectivoReal = depositsTotal + state.cashDrawer;
   const diferencia = efectivoReal - meta;
 
