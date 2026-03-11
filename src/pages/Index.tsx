@@ -36,32 +36,32 @@ function CreditSubgroup({ group, gi, onEdit }: { group: CashEntry[]; gi: number;
   const subtotal = group.reduce((sum, e) => sum + e.amount, 0);
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger className="w-full flex items-center justify-between cursor-pointer group py-1">
-        <p className="text-[10px] font-semibold text-muted-foreground uppercase">
+      <CollapsibleTrigger className="w-full flex items-center justify-between cursor-pointer group py-0.5">
+        <p className="text-[9px] font-semibold text-muted-foreground uppercase">
           Grupo {gi + 1} ({group.length}/6)
         </p>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           <p className="text-xs font-bold text-info shield-blur">{formatCLP(subtotal)}</p>
           <ChevronDown className="w-3 h-3 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
         </div>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <div className="space-y-1.5 mt-1.5">
+        <div className="space-y-1 mt-1">
           {group.map(entry => (
             <div
               key={entry.id}
-              className="flex items-center gap-3 bg-secondary/50 rounded-2xl p-2.5 cursor-pointer hover:bg-secondary/80 transition-colors"
+              className="flex items-center gap-2 bg-secondary/50 rounded-xl p-2 cursor-pointer hover:bg-secondary/80 transition-colors"
               onClick={() => onEdit(entry)}
             >
-              <CreditCard className="w-4 h-4 text-info" />
+              <CreditCard className="w-3.5 h-3.5 text-info" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">
+                <p className="text-xs font-medium text-foreground truncate">
                   {entry.company || 'Crédito'}
-                  {entry.cashCredit && <span className="ml-1 text-[10px] text-warning font-semibold">(Efectivo)</span>}
+                  {entry.cashCredit && <span className="ml-1 text-[9px] text-warning font-semibold">(Efectivo)</span>}
                 </p>
-                <p className="text-xs text-muted-foreground">{entry.time}</p>
+                <p className="text-[10px] text-muted-foreground">{entry.time}</p>
               </div>
-              <p className="text-sm font-bold text-foreground shield-blur">{formatCLP(entry.amount)}</p>
+              <p className="text-xs font-bold text-foreground shield-blur">{formatCLP(entry.amount)}</p>
             </div>
           ))}
         </div>
@@ -93,82 +93,82 @@ export default function Dashboard() {
   const todayEntries = state.entries.filter(e => e.date === new Date().toISOString().split('T')[0]);
 
   return (
-    <div className="space-y-4 pt-2 max-w-lg mx-auto">
-      {/* Status indicator */}
+    <div className="space-y-3 pt-1 max-w-lg mx-auto">
+      {/* Status indicator - compacto */}
       {state.zAmount > 0 && (
-        <div className={`${sc.class} rounded-3xl p-4 flex items-center gap-3`}>
-          <sc.icon className="w-7 h-7" />
+        <div className={`${sc.class} rounded-2xl p-3 flex items-center gap-2`}>
+          <sc.icon className="w-5 h-5" />
           <div>
-            <p className="font-bold text-lg">{sc.label}</p>
+            <p className="font-bold text-base">{sc.label}</p>
             <p className="text-sm opacity-80 shield-blur">{formatCLP(Math.abs(diferencia))}</p>
           </div>
         </div>
       )}
 
-      {/* Z Amount input */}
-      <div className="m3-surface-elevated p-5">
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Monto del Sistema (Z)</p>
+      {/* Z Amount input - compacto */}
+      <div className="m3-surface-elevated p-3">
+        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Monto del Sistema (Z)</p>
         <input
           value={zInput ? formatCLP(parseInt(zInput)) : ''}
           onChange={e => handleZChange(e.target.value)}
           placeholder="$0"
           inputMode="numeric"
-          className="w-full text-3xl font-bold bg-transparent text-foreground outline-none mt-1 shield-blur"
+          className="w-full text-2xl font-bold bg-transparent text-foreground outline-none mt-0.5 shield-blur"
         />
       </div>
 
-      {/* Quick count */}
+      {/* Quick count - compacto */}
       <QuickCountModal />
 
-      {/* Summary grid */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="m3-surface p-4">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Meta</p>
-          <p className="text-xl font-bold text-foreground shield-blur mt-1">{formatCLP(meta)}</p>
-          <p className="text-[10px] text-muted-foreground">Z - Propinas - Créd. Efectivo</p>
+      {/* Summary grid - compacto */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="m3-surface p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Meta</p>
+          <p className="text-lg font-bold text-foreground shield-blur mt-0.5">{formatCLP(meta)}</p>
+          <p className="text-[9px] text-muted-foreground leading-tight">Z - Propinas - Créd. Efectivo</p>
         </div>
-        <div className="m3-surface p-4">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Efectivo Real</p>
-          <p className="text-xl font-bold text-foreground shield-blur mt-1">{formatCLP(efectivoReal)}</p>
-          <p className="text-[10px] text-muted-foreground">Depósitos + Gaveta</p>
+        <div className="m3-surface p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Efectivo Real</p>
+          <p className="text-lg font-bold text-foreground shield-blur mt-0.5">{formatCLP(efectivoReal)}</p>
+          <p className="text-[9px] text-muted-foreground leading-tight">Depósitos + Gaveta</p>
         </div>
-        <div className="m3-surface p-4">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Depósitos</p>
-          <p className="text-xl font-bold text-primary shield-blur mt-1">{formatCLP(depositsTotal)}</p>
+        <div className="m3-surface p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Depósitos</p>
+          <p className="text-lg font-bold text-primary shield-blur mt-0.5">{formatCLP(depositsTotal)}</p>
         </div>
-        <div className="m3-surface p-4">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Propinas</p>
-          <p className="text-xl font-bold text-warning shield-blur mt-1">{formatCLP(state.tipsTotal)}</p>
+        <div className="m3-surface p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Propinas</p>
+          <p className="text-lg font-bold text-warning shield-blur mt-0.5">{formatCLP(state.tipsTotal)}</p>
         </div>
       </div>
 
-      {/* Quick actions */}
+      {/* Quick actions - compacto */}
       <div className="flex gap-2 flex-wrap">
         <EntryDialog type={EntryType.DEPOSIT}>
-          <button className="flex-1 min-w-[100px] m3-surface p-3 flex flex-col items-center gap-1.5 hover:border-primary/40 transition-colors cursor-pointer">
-            <ArrowDownCircle className="w-6 h-6 text-primary" />
+          <button className="flex-1 min-w-[80px] m3-surface p-2.5 flex flex-col items-center gap-1 hover:border-primary/40 transition-colors cursor-pointer">
+            <ArrowDownCircle className="w-5 h-5 text-primary" />
             <span className="text-xs font-medium text-foreground">Depósito</span>
           </button>
         </EntryDialog>
         <EntryDialog type={EntryType.TIP}>
-          <button className="flex-1 min-w-[100px] m3-surface p-3 flex flex-col items-center gap-1.5 hover:border-primary/40 transition-colors cursor-pointer">
-            <Banknote className="w-6 h-6 text-warning" />
+          <button className="flex-1 min-w-[80px] m3-surface p-2.5 flex flex-col items-center gap-1 hover:border-primary/40 transition-colors cursor-pointer">
+            <Banknote className="w-5 h-5 text-warning" />
             <span className="text-xs font-medium text-foreground">Propina</span>
           </button>
         </EntryDialog>
         <EntryDialog type={EntryType.CREDIT}>
-          <button className="flex-1 min-w-[100px] m3-surface p-3 flex flex-col items-center gap-1.5 hover:border-primary/40 transition-colors cursor-pointer">
-            <CreditCard className="w-6 h-6 text-info" />
+          <button className="flex-1 min-w-[80px] m3-surface p-2.5 flex flex-col items-center gap-1 hover:border-primary/40 transition-colors cursor-pointer">
+            <CreditCard className="w-5 h-5 text-info" />
             <span className="text-xs font-medium text-foreground">Crédito</span>
           </button>
         </EntryDialog>
       </div>
 
-      {/* Close shift button */}
+      {/* Close shift button - compacto */}
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <button className="w-full m3-surface p-4 flex items-center justify-center gap-2 hover:border-destructive/40 transition-colors">
-            <LogOut className="w-5 h-5 text-destructive" />
+          <button className="w-full m3-surface p-3 flex items-center justify-center gap-2 hover:border-destructive/40 transition-colors">
+            <LogOut className="w-4 h-4 text-destructive" />
             <span className="text-sm font-medium text-destructive">Cerrar Turno</span>
           </button>
         </AlertDialogTrigger>
@@ -191,15 +191,15 @@ export default function Dashboard() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Today's entries (non-credit) */}
+      {/* Today's entries (non-credit) - compacto */}
       {todayEntries.filter(e => e.type !== EntryType.CREDIT).length > 0 && (
         <Collapsible open={movOpen} onOpenChange={setMovOpen} className="m3-surface overflow-hidden">
-          <CollapsibleTrigger className="w-full p-4 pb-3 flex items-center justify-between cursor-pointer group">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Movimientos de Hoy</p>
+          <CollapsibleTrigger className="w-full p-3 pb-2 flex items-center justify-between cursor-pointer group">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Movimientos de Hoy</p>
             <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
           </CollapsibleTrigger>
           <CollapsibleContent>
-            <div className="px-4 pb-4 space-y-2">
+            <div className="px-3 pb-3 space-y-1.5">
               {todayEntries.filter(e => e.type !== EntryType.CREDIT).slice(-5).reverse().map(entry => {
                 const icons = { DEPOSIT: ArrowDownCircle, TIP: Banknote, CREDIT: CreditCard };
                 const colors = { DEPOSIT: 'text-primary', TIP: 'text-warning', CREDIT: 'text-info' };
@@ -208,15 +208,15 @@ export default function Dashboard() {
                 return (
                   <div
                     key={entry.id}
-                    className="flex items-center gap-3 bg-secondary/50 rounded-2xl p-3 cursor-pointer hover:bg-secondary/80 transition-colors"
+                    className="flex items-center gap-2.5 bg-secondary/50 rounded-xl p-2 cursor-pointer hover:bg-secondary/80 transition-colors"
                     onClick={() => setEditingEntry(entry)}
                   >
-                    <Icon className={`w-5 h-5 ${colors[entry.type]}`} />
+                    <Icon className={`w-4 h-4 ${colors[entry.type]}`} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground truncate">
                         {labels[entry.type]} {entry.company && `· ${entry.company}`}
                       </p>
-                      <p className="text-xs text-muted-foreground">{entry.time}</p>
+                      <p className="text-[10px] text-muted-foreground">{entry.time}</p>
                     </div>
                     <p className="text-sm font-bold text-foreground shield-blur">{formatCLP(entry.amount)}</p>
                   </div>
@@ -227,7 +227,7 @@ export default function Dashboard() {
         </Collapsible>
       )}
 
-      {/* Credits grouped by 6 */}
+      {/* Credits grouped by 6 - compacto */}
       {(() => {
         const credits = state.entries.filter(e => e.type === EntryType.CREDIT);
         if (credits.length === 0) return null;
@@ -240,8 +240,8 @@ export default function Dashboard() {
 
         return (
           <Collapsible open={credOpen} onOpenChange={setCredOpen} className="m3-surface overflow-hidden">
-            <CollapsibleTrigger className="w-full p-4 pb-3 flex items-center justify-between cursor-pointer group">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">
+            <CollapsibleTrigger className="w-full p-3 pb-2 flex items-center justify-between cursor-pointer group">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
                 Créditos · {credits.length} registros
               </p>
               <div className="flex items-center gap-2">
@@ -250,12 +250,12 @@ export default function Dashboard() {
               </div>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div className="px-4 pb-4 space-y-4">
+              <div className="px-3 pb-3 space-y-3">
                 {groups.map((group, gi) => (
                   <CreditSubgroup key={gi} group={group} gi={gi} onEdit={setEditingEntry} />
                 ))}
               </div>
-              <p className="text-[10px] text-muted-foreground px-4 pb-3 italic">Los créditos no afectan el saldo de caja</p>
+              <p className="text-[10px] text-muted-foreground px-3 pb-2 italic">Los créditos no afectan el saldo de caja</p>
             </CollapsibleContent>
           </Collapsible>
         );
