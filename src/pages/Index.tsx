@@ -57,6 +57,7 @@ function CreditSubgroup({ group, gi, onEdit }: { group: CashEntry[]; gi: number;
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">
                   {entry.company || 'Crédito'}
+                  {entry.cashCredit && <span className="ml-1 text-[10px] text-warning font-semibold">(Efectivo)</span>}
                 </p>
                 <p className="text-xs text-muted-foreground">{entry.time}</p>
               </div>
@@ -124,7 +125,7 @@ export default function Dashboard() {
         <div className="m3-surface p-4">
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Meta</p>
           <p className="text-xl font-bold text-foreground shield-blur mt-1">{formatCLP(meta)}</p>
-          <p className="text-[10px] text-muted-foreground">Z - Propinas</p>
+          <p className="text-[10px] text-muted-foreground">Z - Propinas - Créd. Efectivo</p>
         </div>
         <div className="m3-surface p-4">
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Efectivo Real</p>

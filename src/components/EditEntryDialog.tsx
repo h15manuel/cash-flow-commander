@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { CashEntry, EntryType } from '@/types';
 import { useApp } from '@/contexts/AppContext';
 import { formatCLP, parseCLPInput } from '@/lib/format';
@@ -22,6 +23,7 @@ export default function EditEntryDialog({ entry, open, onOpenChange }: Props) {
   const [amountStr, setAmountStr] = useState(entry.amount.toString());
   const [company, setCompany] = useState(entry.company || '');
   const [observation, setObservation] = useState(entry.observation || '');
+  const [cashCredit, setCashCredit] = useState(entry.cashCredit || false);
 
   const Icon = icons[entry.type];
 
@@ -37,6 +39,7 @@ export default function EditEntryDialog({ entry, open, onOpenChange }: Props) {
       amount,
       company: entry.type === EntryType.CREDIT ? company || undefined : entry.company,
       observation: observation || undefined,
+      cashCredit: entry.type === EntryType.CREDIT ? cashCredit : undefined,
     });
     onOpenChange(false);
   };
@@ -71,6 +74,13 @@ export default function EditEntryDialog({ entry, open, onOpenChange }: Props) {
                 placeholder="Nombre de la empresa"
                 className="rounded-2xl bg-secondary border-border"
               />
+            </div>
+          )}
+
+          {entry.type === EntryType.CREDIT && (
+            <div className="flex items-center justify-between rounded-2xl bg-secondary/50 p-3">
+              <Label className="text-sm text-foreground">Crédito en efectivo</Label>
+              <Switch checked={cashCredit} onCheckedChange={setCashCredit} />
             </div>
           )}
 

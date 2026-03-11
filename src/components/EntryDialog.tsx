@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { EntryType } from '@/types';
 import { useApp } from '@/contexts/AppContext';
 import { formatCLP, parseCLPInput, generateId } from '@/lib/format';
@@ -26,6 +27,7 @@ export default function EntryDialog({ type, children }: Props) {
   const [cashier, setCashier] = useState('');
   const [company, setCompany] = useState('');
   const [observation, setObservation] = useState('');
+  const [cashCredit, setCashCredit] = useState(false);
 
   const config = entryConfig[type];
 
@@ -46,6 +48,7 @@ export default function EntryDialog({ type, children }: Props) {
       cashier: config.needsCashier ? cashier : undefined,
       company: config.needsCompany ? company : undefined,
       observation: observation || undefined,
+      cashCredit: type === EntryType.CREDIT ? cashCredit : undefined,
       date: now.toISOString().split('T')[0],
       time: now.toTimeString().slice(0, 5),
     });
@@ -54,6 +57,7 @@ export default function EntryDialog({ type, children }: Props) {
     setCashier('');
     setCompany('');
     setObservation('');
+    setCashCredit(false);
     setOpen(false);
   };
 
@@ -107,6 +111,13 @@ export default function EntryDialog({ type, children }: Props) {
                 placeholder="Nombre de la empresa"
                 className="rounded-2xl bg-secondary border-border"
               />
+            </div>
+          )}
+
+          {type === EntryType.CREDIT && (
+            <div className="flex items-center justify-between rounded-2xl bg-secondary/50 p-3">
+              <Label className="text-sm text-foreground">Crédito en efectivo</Label>
+              <Switch checked={cashCredit} onCheckedChange={setCashCredit} />
             </div>
           )}
 

@@ -27,7 +27,8 @@ export function useAppState() {
   const closeShift = useCallback(() => {
     setState(s => {
       const depTotal = s.entries.filter(e => e.type === 'DEPOSIT').reduce((sum, e) => sum + e.amount, 0);
-      const m = s.zAmount - s.tipsTotal;
+      const cashCreditTot = s.entries.filter(e => e.type === 'CREDIT' && e.cashCredit).reduce((sum, e) => sum + e.amount, 0);
+      const m = s.zAmount - s.tipsTotal - cashCreditTot;
       const real = depTotal + s.cashDrawer;
       const diff = real - m;
       const st = diff === 0 ? 'cuadrada' : diff > 0 ? 'sobrante' : 'faltante';
@@ -89,7 +90,7 @@ export function useAppState() {
     });
   }, []);
 
-  const editEntry = useCallback((id: string, updates: Partial<Pick<CashEntry, 'amount' | 'observation' | 'company'>>) => {
+  const editEntry = useCallback((id: string, updates: Partial<Pick<CashEntry, 'amount' | 'observation' | 'company' | 'cashCredit'>>) => {
     setState(s => {
       const newEntries = s.entries.map(e => e.id === id ? { ...e, ...updates } : e);
       const tipsTotal = newEntries
@@ -104,7 +105,11 @@ export function useAppState() {
     .filter(e => e.type === 'DEPOSIT')
     .reduce((sum, e) => sum + e.amount, 0);
 
-  const meta = state.zAmount - state.tipsTotal;
+  const cashCreditTotal = state.entries
+    .filter(e => e.type === 'CREDIT' && e.cashCredit)
+    .reduce((sum, e) => sum + e.amount, 0);
+
+  const meta = state.zAmount - state.tipsTotal - cashCreditTotal;
   const efectivoReal = depositsTotal + state.cashDrawer;
   const diferencia = efectivoReal - meta;
 
