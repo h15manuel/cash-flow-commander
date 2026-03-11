@@ -27,6 +27,7 @@ export default function EntryDialog({ type, children }: Props) {
   const [cashier, setCashier] = useState('');
   const [company, setCompany] = useState('');
   const [observation, setObservation] = useState('');
+  const [cashCredit, setCashCredit] = useState(false);
 
   const config = entryConfig[type];
 
