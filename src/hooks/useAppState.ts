@@ -89,7 +89,7 @@ export function useAppState() {
     });
   }, []);
 
-  const editEntry = useCallback((id: string, updates: Partial<Pick<CashEntry, 'amount' | 'observation' | 'company'>>) => {
+  const editEntry = useCallback((id: string, updates: Partial<Pick<CashEntry, 'amount' | 'observation' | 'company' | 'cashCredit'>>) => {
     setState(s => {
       const newEntries = s.entries.map(e => e.id === id ? { ...e, ...updates } : e);
       const tipsTotal = newEntries
